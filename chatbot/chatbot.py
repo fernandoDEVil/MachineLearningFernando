@@ -1,20 +1,28 @@
-from openai import OpenAI
 import os
+from openai import OpenAI
+from dotenv import load_dotenv
 
-# Cliente OpenAI
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+load_dotenv()
 
-def preguntar_chatbot(mensaje_usuario):
-    """
-    Envía un mensaje al modelo de IA y devuelve la respuesta
-    """
+client = OpenAI(
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com"
+)
+
+def preguntar_chatbot(texto, historial=None):
+    mensajes = []
+
+    if historial:
+        mensajes.extend(historial)
+
+    mensajes.append({
+        "role": "user",
+        "content": texto
+    })
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "Eres un asistente útil y claro."},
-            {"role": "user", "content": mensaje_usuario}
-        ],
+        model="deepseek-chat",
+        messages=mensajes,
         temperature=0.7
     )
 
